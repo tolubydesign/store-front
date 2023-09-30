@@ -1,0 +1,99 @@
+{
+  "products": [
+    {
+      "id": "",
+      "salePrice": 50000,
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category A"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category A"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category C"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category C"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category B"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category A"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category B"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category B"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category B"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category A"
+    },
+    {
+      "id": "",
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category A"
+    },
+    {
+      "id": "",
+      "salePrice": 50000,
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category A"
+    },
+    {
+      "id": "",
+      "salePrice": 50000,
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category B"
+    },
+    {
+      "id": "",
+      "salePrice": 50000,
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category C"
+    },
+    {
+      "id": "",
+      "salePrice": 50000,
+      "price": 100000,
+      "productName": "Product Name",
+      "productCategory": "Category C"
+    }
+  ]
+}
