@@ -45,7 +45,7 @@ const searchInputClassName = "border-[3px] border-gray-200 rounded-l-lg p-1";
 const searchButtonClassName = "bg-gray-200 p-2 rounded-r-lg";
 const sortByGroupClassName = "flex flex-row justify-center items-center";
 const sortTitle = "text-gray-700 font-medium md:text-base mr-2";
-const sortSelector = "sort--selector rounded-md px-7 py-2 font-medium text-black bg-gray-200";
+const sortSelector = "selector--dropdown-basic rounded-md px-7 py-2 font-medium text-black bg-gray-200";
 const sortSelectorOption = "sort--selector-option font-medium";
 
 function updateSearchInputValue(event: Event | any) {
@@ -76,6 +76,8 @@ function searchForItem() {
         <button :class="searchButtonClassName" @click="searchForItem">
           <IconSearch :height="20" :width="20" />
         </button>
+
+        {{ searchInputValue }}
       </div>
     </div>
 
@@ -93,5 +95,6 @@ function searchForItem() {
 
 <style scoped>
 @import "../../assets/styles/modules/product-header.module.scss";
+@import "../../assets/styles/selector.scss"
 
 </style>

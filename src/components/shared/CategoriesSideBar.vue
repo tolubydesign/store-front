@@ -18,9 +18,8 @@ const checkedCategories = ref([])
 const selectedCategory = ref<Record<ProductCategory, number> | undefined>(undefined)
 
 const categoryGroupClassName = "flex flex-col justify-center items-center";
-const categorySelector = "sort--selector rounded-md pl-4 pr-8 py-2 font-medium text-black bg-gray-200";
+const categorySelector = "selector--dropdown-basic rounded-md pl-4 pr-8 py-2 font-medium text-black bg-gray-200";
 const sortTitle = "text-gray-700 font-medium md:text-base mr-2";
-const sortSelector = "sort--selector rounded-md px-7 py-2 font-medium text-black bg-gray-200";
 const sortSelectorOption = "sort--selector-option font-medium";
 
 </script>
@@ -53,4 +52,6 @@ const sortSelectorOption = "sort--selector-option font-medium";
 
 <style scoped lang="scss">
 @import "../../assets/styles/modules/product-header.module.scss";
+@import "../../assets/styles/selector.scss";
+
 </style>
