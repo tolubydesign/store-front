@@ -1,0 +1,21 @@
+
+.selector--dropdown-basic {
+  background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBVcGxvYWRlZCB0bzogU1ZHIFJlcG8sIHd3dy5zdmdyZXBvLmNvbSwgR2VuZXJhdG9yOiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB4PSIwIiBmaWxsPSJub25lIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiLz4KICA8Zz4KICAgIDxwYXRoIGQ9Ik0yMCA5bC04IDgtOC04IDEuNDE0LTEuNDE0TDEyIDE0LjE3Mmw2LjU4Ni02LjU4NiIvPgogIDwvZz4KPC9zdmc+");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: auto 40%;
+
+  // disable default appearance
+  outline: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &::selection {
+    transform: rotate(90deg);
+  }
+}
