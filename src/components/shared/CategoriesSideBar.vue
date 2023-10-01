@@ -51,7 +51,6 @@ const sortSelectorOption = "sort--selector-option font-medium";
 </template>
 
 <style scoped lang="scss">
-@import "../../assets/styles/modules/product-header.module.scss";
 @import "../../assets/styles/selector.scss";
 
 </style>

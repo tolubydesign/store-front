@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router';
 import Product from '@/components/shared/Product.vue';
 
 // Class names
-const sectionClassName = "flex flex-col justify-center items-center";
+const sectionClassName = "flex flex-col justify-center items-center mb-10";
 
 // Store
 const productStore = useProductStore();
@@ -36,12 +36,11 @@ watchEffect(() => {
       </template>
     </div>
 
-    <div v-if="!showMore">
-      <button @click="() => showMore = true"> Show More </button>
+    <div v-if="!showMore" class="mt-4">
+      <button @click="() => showMore = true" class="font-bold text-slate-800 underline"> Show More </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import "../../assets/styles/modules/product-header.module.scss";
 </style>

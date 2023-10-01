@@ -38,7 +38,7 @@ const sortingOptions = ref<{ value: string, text: string }[]>([
 const sortingSelection = ref(sortingOptions.value[0].value)
 
 // Class names
-const sectionClassName = "product--header--component py-3 border-y-[3px] border-gray-200 px-2";
+const sectionClassName = "product--header--component py-3 border-y-[3px] border-gray-200 px-2 w-full";
 const headerProductSearchGroupClassName = "flex flex-row justify-center items-center header--listing--group";
 const searchInputGroupClassName = "flex flex-row justify-center items-center header--search--group"
 const searchInputClassName = "border-[3px] border-gray-200 rounded-l-lg p-1";
@@ -62,39 +62,37 @@ function searchForItem() {
 
 <template>
   <div data-element="Products Header Component" :class="sectionClassName">
-    <div :class="headerProductSearchGroupClassName">
-      <div v-if="products && products.length" class="md:mr-[50px] flex flex-row">
-        <p class="font-medium mr-3">Products found:</p>
-        <p class="font-bold">{{ products.length }}</p>
+    <div class="flex flex-row justify-between items-center max-w-[1400px] mx-auto">
+      <div :class="headerProductSearchGroupClassName">
+        <div v-if="products && products.length" class="md:mr-[50px] flex flex-row">
+          <p class="font-medium mr-3">Products found:</p>
+          <p class="font-bold">{{ products.length }}</p>
+        </div>
+
+        <div :class="searchInputGroupClassName">
+          <input :class="searchInputClassName" placeholder="Search for items in this list" :value="searchInputValue"
+            @input="(event: Event) => updateSearchInputValue(event)" @keyup.enter="searchForItem" />
+          <button :class="searchButtonClassName" @click="searchForItem">
+            <IconSearch :height="20" :width="20" />
+          </button>
+
+          {{ searchInputValue }}
+        </div>
       </div>
 
-      <div :class="searchInputGroupClassName">
-        <input :class="searchInputClassName" placeholder="Search for items in this list"
-          :value="searchInputValue"
-          @input="(event: Event) => updateSearchInputValue(event)"
-          @keyup.enter="searchForItem"/>
-        <button :class="searchButtonClassName" @click="searchForItem">
-          <IconSearch :height="20" :width="20" />
-        </button>
+      <div :class="sortByGroupClassName">
+        <p :class="sortTitle">Sort By:</p>
 
-        {{ searchInputValue }}
+        <select :class="sortSelector" name="sorting" id="sorting-selector" v-model="sortingSelection">
+          <template v-for="option in sortingOptions">
+            <option :class="sortSelectorOption" :value="option.value">{{ option.text }}</option>
+          </template>
+        </select>
       </div>
-    </div>
-
-    <div :class="sortByGroupClassName">
-      <p :class="sortTitle">Sort By:</p>
-
-      <select :class="sortSelector" name="sorting" id="sorting-selector" v-model="sortingSelection">
-        <template v-for="option in sortingOptions">
-          <option :class="sortSelectorOption" :value="option.value">{{ option.text }}</option>
-        </template>
-      </select>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import "../../assets/styles/modules/product-header.module.scss";
-@import "../../assets/styles/selector.scss"
-
+@import "../../assets/styles/selector.scss";
 </style>

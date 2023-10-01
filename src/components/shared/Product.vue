@@ -4,12 +4,10 @@ import { computed, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type { Product } from '@/models/product.model';
 
-const props = defineProps<{
+defineProps<{
   product: Product
 }>()
 
-console.log("props.product.salePrice", props.product.salePrice)
-const onSale = ref<boolean>(!!props.product.salePrice);
 const showViewButton = ref<boolean>(false)
 
 const router = useRouter();
@@ -22,22 +20,16 @@ const sectionClassName = "product--section block px-5 py-5 rounded-md border-[3p
 const saleBadgeClassName = "absolute top-0 left-0 bg-gray-500 rounded-tl-md rounded-br-md px-2 py-1";
 const productInformationClassName = "md:mt-4";
 const productImageGroupClassName = "rounded-md min-h-[260px] bg-gray-300";
-const viewProductButtonClassName = `flex flex-row justify-center items-center bg-gray-800 text-white font-medium px-6 rounded-md`;
+const viewProductButtonClassName = `flex flex-row justify-center items-center bg-gray-600 text-white font-medium px-6 rounded-md`;
 const basicPriceText = "font-normal text-md md:text-base text-gray-800";
 const dimmedPriceText = "font-normal text-sm md:text-md text-gray-400";
-const salePriceTextClassName = `${basicPriceText}`;
-
-const priceTextClassName = onSale ? `${basicPriceText} ` : dimmedPriceText + " line-through";
-
-const viewProductButton = reactive([
-  viewProductButtonClassName,
-  !showViewButton ?? "opacity-0",
-  buttonOpacityTransitionProperties
-])
 
 function updateProductViewState(show: boolean) {
   showViewButton.value = show;
-  // console.log("updateProductViewState", showViewButton.value);
+}
+
+const formatCurrency = (currency: number): string => {
+  return currency.toLocaleString("en-US") + '.00'
 }
 
 </script>
@@ -63,14 +55,14 @@ function updateProductViewState(show: boolean) {
 
         <div class="flex flex-row justify-between w-full mt-2">
           <div class="mt-auto">
-            <p v-if="product.salePrice" :class="salePriceTextClassName">${{ product.salePrice }}</p>
-            <p :class="priceTextClassName">
-              ${{ product.price }}
+            <p v-if="product.salePrice" :class="basicPriceText">${{ formatCurrency(product.salePrice) }}</p>
+            <p :class="product.salePrice ? dimmedPriceText + ' line-through' : basicPriceText">
+              ${{ formatCurrency(product.price) }}
             </p>
           </div>
 
-          <button :class="viewProductButton">
-            View
+          <button on :class="[{'opacity-0': !showViewButton }, viewProductButtonClassName, buttonOpacityTransitionProperties]">
+            <p class="text-white text-base md:text-lg font-medium mr-3 uppercase">View</p>
             <IconArrowDirectionRight :width="40" :height="40" :color="'#fff'" />
           </button>
         </div>
@@ -81,7 +73,5 @@ function updateProductViewState(show: boolean) {
 </template>
 
 <style scoped lang="scss">
-@import "../../assets/styles/modules/product-header.module.scss";
-
 .product--section {}
 </style>
