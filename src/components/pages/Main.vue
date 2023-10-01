@@ -26,9 +26,8 @@ onMounted(() => {
 <template>
   <div>
     <ProductSearchHeader />
-
-    <div class="grid sm:grid-cols-[160px_minmax(900px,_1fr)] mt-10 max-w-[1400px] mx-auto">
-      <CategoriesSideBar />
+    <div class="grid md:grid-cols-[160px_minmax(0,_1fr)] mt-10 max-w-[1400px] mx-auto">
+      <CategoriesSideBar class="hidden md:block"  />
       <ProductDisplay />
     </div>
   </div>

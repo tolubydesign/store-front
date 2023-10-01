@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import IconArrowDirectionRight from "@/components/icons/IconArrowDirectionRight.vue"
-import { computed, reactive, ref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type { Product } from '@/models/product.model';
 
@@ -20,7 +20,7 @@ const sectionClassName = "product--section block px-5 py-5 rounded-md border-[3p
 const saleBadgeClassName = "absolute top-0 left-0 bg-gray-500 rounded-tl-md rounded-br-md px-2 py-1";
 const productInformationClassName = "md:mt-4";
 const productImageGroupClassName = "rounded-md min-h-[260px] bg-gray-300";
-const viewProductButtonClassName = `flex flex-row justify-center items-center bg-gray-600 text-white font-medium px-6 rounded-md`;
+const viewProductButtonClassName = `flex flex-row justify-center items-center bg-gray-600 text-white font-medium px-2 sm:px-3 md:px-2 xl:px-6 rounded-md`;
 const basicPriceText = "font-normal text-md md:text-base text-gray-800";
 const dimmedPriceText = "font-normal text-sm md:text-md text-gray-400";
 
@@ -35,7 +35,7 @@ const formatCurrency = (currency: number): string => {
 </script>
 
 <template>
-  <div data-element="Products Header Component" :class="sectionClassName" @mouseenter="updateProductViewState(true)"
+  <div data-element="Product Component" :class="sectionClassName" @mouseenter="updateProductViewState(true)"
     @mouseleave="updateProductViewState(false)">
     <div class="flex flex-col relative">
 
@@ -44,7 +44,7 @@ const formatCurrency = (currency: number): string => {
       </div>
 
       <div :class="productImageGroupClassName">
-        <img class="" src="" srcset="" />
+        <!-- <img class="" src="_blank" srcset="" /> -->
       </div>
 
       <div :class="productInformationClassName">
@@ -61,9 +61,11 @@ const formatCurrency = (currency: number): string => {
             </p>
           </div>
 
-          <button on :class="[{'opacity-0': !showViewButton }, viewProductButtonClassName, buttonOpacityTransitionProperties]">
-            <p class="text-white text-base md:text-lg font-medium mr-3 uppercase">View</p>
-            <IconArrowDirectionRight :width="40" :height="40" :color="'#fff'" />
+          <button on
+            :class="[{ 'md:opacity-0': !showViewButton }, viewProductButtonClassName, buttonOpacityTransitionProperties]">
+            <p class="text-white text-xm md:text-sm md:text-lg font-medium md:mr-3 uppercase">View</p>
+            <IconArrowDirectionRight class="hidden md:block w-full max-w-[25px] max-w-[25px] lg:max-w-[40px] lg:max-h-[40px]" :width="40"
+              :height="40" :color="'#fff'" />
           </button>
         </div>
       </div>

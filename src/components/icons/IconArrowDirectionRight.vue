@@ -1,5 +1,5 @@
 <template>
-  <svg :fill="color" :height="height + 'px'" :width="width + 'px'" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+  <svg :class="class" :fill="color" :height="height + 'px'" :width="width + 'px'" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve">
     <path id="XMLID_7_" d="M288.107,116.894c-5.858-5.858-15.355-5.858-21.213,0c-5.858,5.858-5.858,15.355,0,21.213L278.787,150H15
 	c-8.284,0-15,6.716-15,15c0,8.284,6.716,15,15,15h263.787l-11.894,11.893c-5.858,5.858-5.858,15.355,0,21.213
@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 defineProps<{
+  class: string,
   width: number,
   height: number,
   color: string
