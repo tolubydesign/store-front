@@ -11,7 +11,6 @@ const router = useRouter();
 const productStore = useProductStore();
 const { products, productCategories } = storeToRefs(productStore);
 
-console.log("Object.keys(productCategories.value)[0]", productCategories.value)
 const checkedCategories = ref([])
 const selectedCategory = ref<Record<ProductCategory, number> | undefined>(undefined)
 
