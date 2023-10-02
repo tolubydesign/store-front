@@ -6,20 +6,24 @@ import CategoriesSideBar from "@/components/shared/CategoriesSideBar.vue"
 import ProductDisplay from "@/components/shared/ProductDisplay.vue"
 import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
+import type { AxiosResponse } from 'axios';
 const router = useRouter();
 
 // Store
 const productStore = useProductStore();
 const { } = storeToRefs(productStore);
-const { GetProducts } = productStore;
+const { GetProducts, GetAllRelevantParameters } = productStore;
 
-async function fetchProducts(): Promise<void> {
-  GetProducts();
+async function fetchProducts(): Promise<void | AxiosResponse<any, any> | Error> {
+  return GetProducts();
 }
 
 onMounted(() => {
-  fetchProducts()
-})
+  fetchProducts().then(() => {
+    // read url. find categories and filters
+    GetAllRelevantParameters(router);
+  });
+});
 
 </script>
 
@@ -27,7 +31,7 @@ onMounted(() => {
   <div>
     <ProductSearchHeader />
     <div class="grid md:grid-cols-[160px_minmax(0,_1fr)] mt-10 max-w-[1400px] mx-auto">
-      <CategoriesSideBar class="hidden md:block"  />
+      <CategoriesSideBar class="hidden md:block" />
       <ProductDisplay />
     </div>
   </div>

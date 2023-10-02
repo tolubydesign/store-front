@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useProductStore } from '@/stores/product';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref, watch, watchEffect } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Product from '@/components/shared/Product.vue';
 
 // Class names
@@ -9,7 +9,7 @@ const sectionClassName = "flex flex-col justify-center items-center mb-10";
 
 // Store
 const productStore = useProductStore();
-const { products, orderedProducts } = storeToRefs(productStore);
+const { orderedProducts } = storeToRefs(productStore);
 
 const showMore = ref<boolean>(false);
 

@@ -2,39 +2,15 @@
 import { useProductStore } from '@/stores/product';
 import IconSearch from '@/components/icons/IconSearch.vue'
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 // Store
 const productStore = useProductStore();
-const { products } = storeToRefs(productStore);
+const { products, searchInputValue, sortingOptions, sortingSelection } = storeToRefs(productStore);
 
-const searchInputValue = ref("");
-const sortingOptions = ref<{ value: string, text: string }[]>([
-  {
-    value: "",
-    text: ""
-  },
-  {
-    value: "name",
-    text: "Name A-Z"
-  },
-  {
-    value: "category",
-    text: "Category A-Z"
-  },
-  {
-    value: "priceAsc",
-    text: "Price: Low-High"
-  },
-  {
-    value: "priceDesc",
-    text: "Price: High-Low"
-  }
-]);
-const sortingSelection = ref(sortingOptions.value[0].value)
 const filterDropdown = ref(false);
 const sortByDropdown = ref(false);
 
@@ -52,16 +28,27 @@ const sortSelectorOption = "sort--selector-option font-medium";
 
 function updateSearchInputValue(event: Event | any) {
   searchInputValue.value = event?.target?.value
+  console.log("updateSearchInputValue", searchInputValue.value);
 }
 
 function searchForItem() {
-  // Router search ?q=...
-  // redirect to dynamic page 
   console.log("search input value", searchInputValue.value);
+
+  router.push({ query: { q: searchInputValue.value }})
 }
+
+watch(sortingSelection, async (next, previous) => {
+  if (next != previous) {
+    filterBy();
+  }
+})
 
 const showFilters = () => filterDropdown.value != filterDropdown.value;
 const showSortBy = () => sortByDropdown.value != sortByDropdown.value;
+
+const filterBy = () => {
+  sortingSelection
+}
 
 </script>
 
