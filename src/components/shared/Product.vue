@@ -10,8 +10,6 @@ defineProps<{
 
 const showViewButton = ref<boolean>(false)
 
-const router = useRouter();
-
 // Styling properties
 const buttonOpacityTransitionProperties = "transition-all duration-150";
 
@@ -24,7 +22,7 @@ const viewProductButtonClassName = `flex flex-row justify-center items-center bg
 const basicPriceText = "font-normal text-md md:text-base text-gray-800";
 const dimmedPriceText = "font-normal text-sm md:text-md text-gray-400";
 
-function updateProductViewState(show: boolean) {
+const updateProductViewState = (show: boolean) => {
   showViewButton.value = show;
 }
 
@@ -75,5 +73,4 @@ const formatCurrency = (currency: number): string => {
 </template>
 
 <style scoped lang="scss">
-.product--section {}
 </style>

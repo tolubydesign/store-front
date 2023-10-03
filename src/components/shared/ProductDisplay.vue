@@ -19,8 +19,14 @@ onMounted(() => {
 
 // watch products
 watch(orderedProducts, async (next, previous) => {
-  showMore.value = false;
-})
+  if (next && next != previous) {
+    showMore.value = false;
+  }
+});
+
+const showMoreProducts = () => {
+  showMore.value = true
+}
 
 </script>
 
@@ -29,6 +35,7 @@ watch(orderedProducts, async (next, previous) => {
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 w-full">
       <!-- only show first 8 items -->
       <template v-if="!showMore">
+        <!-- not showing the full list of products  -->
         <template v-for="(product, index) in orderedProducts" :key="product.id">
           <Product v-if="index <= 7" :product="product" />
         </template>
@@ -41,8 +48,9 @@ watch(orderedProducts, async (next, previous) => {
       </template>
     </div>
 
-    <div v-if="!showMore" class="mt-4">
-      <button @click="() => showMore = true" class="font-bold text-slate-800 underline"> Show More </button>
+    <div v-if="!showMore && (orderedProducts && orderedProducts?.length >= 7) " class="mt-4">
+      <!-- full list of products goes beyond 8 items -->
+      <button @click="showMoreProducts" class="font-bold text-slate-800 underline"> Show More </button>
     </div>
   </div>
 </template>

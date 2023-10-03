@@ -11,7 +11,6 @@ const router = useRouter();
 
 // Store
 const productStore = useProductStore();
-const { } = storeToRefs(productStore);
 const { GetProducts, GetAllRelevantParameters } = productStore;
 
 async function fetchProducts(): Promise<void | AxiosResponse<any, any> | Error> {
@@ -24,7 +23,6 @@ onMounted(() => {
     GetAllRelevantParameters(router);
   });
 });
-
 </script>
 
 <template>

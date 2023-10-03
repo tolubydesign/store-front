@@ -2,14 +2,22 @@
 import { useProductStore } from '@/stores/product';
 import IconSearch from '@/components/icons/IconSearch.vue'
 import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, ref, watch } from 'vue';
+import { useRouter, type RouteLocationNormalizedLoaded } from 'vue-router';
 
 const router = useRouter();
 
 // Store
 const productStore = useProductStore();
-const { products, searchInputValue, sortingOptions, sortingSelection } = storeToRefs(productStore);
+const {
+  products,
+  searchInputValue,
+  sortingOptions,
+  sortingSelection,
+  selectedProductCategory,
+  productCategories
+} = storeToRefs(productStore);
+const { GetAllRelevantParameters } = productStore
 
 const filterDropdown = ref(false);
 const sortByDropdown = ref(false);
@@ -25,29 +33,74 @@ const sortTitle = "text-gray-700 font-medium md:text-base mr-2";
 const sortSelectorClassName = "selector--dropdown-basic rounded-md px-7 py-2 font-medium text-black bg-gray-200";
 const mobileSortSelectorClassName = "px-4 py-2 font-medium text-black bg-gray-200 rounded-md w-[45%] mx-[2.5%]"
 const sortSelectorOption = "sort--selector-option font-medium";
+const mobileSortByButtonClassName = "text-white text-sm font-semibold bg-cyan-700 rounded-md px-3.5 py-2.5 shadow-sm hover:bg-cyan-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:bg-gray-200";
+const mobileFilterByButtonClassName = "text-white text-sm font-semibold bg-cyan-700 rounded-md px-3.5 py-2.5 shadow-sm hover:bg-cyan-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:bg-gray-200"
 
 function updateSearchInputValue(event: Event | any) {
   searchInputValue.value = event?.target?.value
-  console.log("updateSearchInputValue", searchInputValue.value);
 }
 
 function searchForItem() {
-  console.log("search input value", searchInputValue.value);
-
-  router.push({ query: { q: searchInputValue.value }})
+  router.push({ query: { q: searchInputValue.value } }).then(() => {
+    GetAllRelevantParameters(router);
+  });
 }
 
-watch(sortingSelection, async (next, previous) => {
-  if (next != previous) {
-    filterBy();
-  }
+onMounted(() => {
+  closeDropdowns();
 })
 
-const showFilters = () => filterDropdown.value != filterDropdown.value;
-const showSortBy = () => sortByDropdown.value != sortByDropdown.value;
+watch(sortingSelection, async (next, previous) => {
+  if (next && next != previous) directToFilterPage(next);
+})
 
-const filterBy = () => {
-  sortingSelection
+const showFilters = () => {
+  if (sortByDropdown.value) closeDropdowns();
+  filterDropdown.value = !filterDropdown.value;
+};
+
+const showSortBy = () => {
+  if (filterDropdown.value) closeDropdowns();
+  sortByDropdown.value = !sortByDropdown.value;
+};
+
+const sortProductsBy = (filter: string) => {
+  sortingSelection.value = filter;
+  closeDropdowns()
+}
+
+const filterProductsBy = (category: string) => {
+  selectedProductCategory.value = category
+
+  router.push(`/category/${selectedProductCategory.value}`).then(() => {
+    GetAllRelevantParameters(router);
+  });
+
+  closeDropdowns()
+}
+
+const closeDropdowns = () => {
+  sortByDropdown.value = false;
+  filterDropdown.value = false;
+}
+
+// TODO: handle redirect in the store
+const directToFilterPage = (filter: string) => {
+  let url: string = '';
+
+  const currentRoute: RouteLocationNormalizedLoaded = router.currentRoute.value;
+
+  (selectedProductCategory?.value) ?
+    url = `/category/${selectedProductCategory.value}/filter/${filter}` :
+    url = `/category/all/filter/${filter}`;
+
+  if (currentRoute.query.q || searchInputValue.value) {
+    url += `?q=${searchInputValue.value}`;
+  }
+
+  router.push(url).then(() => {
+    GetAllRelevantParameters(router);
+  });
 }
 
 </script>
@@ -70,6 +123,7 @@ const filterBy = () => {
         </div>
       </div>
 
+      <!-- sort by: desktop -->
       <div :class="sortByGroupClassName">
         <p :class="sortTitle">Sort By:</p>
 
@@ -93,7 +147,28 @@ const filterBy = () => {
     </div>
 
     <!-- TODO: create dropdown for filters (categories) and sort by (asc and desc) -->
-    <div></div>
+    <!-- TODO: add animation -->
+    <div v-if="filterDropdown || sortByDropdown" class="mt-4 mx-[2.5%]">
+      <div v-if="sortByDropdown" class="grid grid-cols-2 gap-3">
+        <template v-if="sortingOptions" v-for="option in sortingOptions">
+          <button :disabled="option.value.toLowerCase() === sortingSelection?.toLowerCase()"
+            @click="sortProductsBy(option.value)" :class="mobileSortByButtonClassName">
+            {{ option.text }}
+          </button>
+        </template>
+      </div>
+
+      <div v-if="filterDropdown" class="grid grid-cols-2 gap-3">
+        <template v-if="productCategories" v-for="(total, category) in productCategories">
+
+          <button :disabled="category.toLowerCase() === selectedProductCategory?.toLowerCase()"
+            @click="filterProductsBy(category)" :class="mobileFilterByButtonClassName">
+            {{ category }}
+          </button>
+
+        </template>
+      </div>
+    </div>
   </div>
 
   <!-- mobile -->
@@ -103,6 +178,8 @@ const filterBy = () => {
       <p class="font-bold">{{ products.length }}</p>
     </div>
   </div>
+
+  <!-- TODO: create a clear filters / sort by -->
 </template>
 
 <style scoped>

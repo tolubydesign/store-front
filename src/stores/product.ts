@@ -1,25 +1,21 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios, { type AxiosResponse } from 'axios'
-import type { Product, ProductCategory } from '@/models/product.model';
+import type { Product, ProductCategory, ProductFilterOptions } from '@/models/product.model';
 import { type Router } from 'vue-router';
 
 export const useProductStore = defineStore('product', () => {
   const fetchProductsLoader = ref(true);
   const fetchProductImagesLoader = ref(false);
-  
+
   const products = ref<Product[] | undefined>(undefined);
   const orderedProducts = ref<Product[] | undefined>(undefined);
-  
+
   const productCategories = ref<Record<ProductCategory, number> | undefined>(undefined);
-  const selectedProductCategories = ref<string | undefined>(undefined);
+  const selectedProductCategory = ref<string | undefined>(undefined);
 
   const searchInputValue = ref("");
-  const sortingOptions = ref<{ value: string, text: string }[]>([
-    {
-      value: "",
-      text: ""
-    },
+  const sortingOptions = ref<{ value: ProductFilterOptions, text: string }[]>([
     {
       value: "name",
       text: "Name A-Z"
@@ -37,13 +33,10 @@ export const useProductStore = defineStore('product', () => {
       text: "Price: High-Low"
     }
   ]);
-  const sortingSelection = ref(sortingOptions.value[0].value)
-
-  const filters = ref();
-  const selectedFilter = ref();
+  const sortingSelection = ref<ProductFilterOptions | string | undefined>(sortingOptions.value[0].value)
 
   /**
-   * @description Fetch Product data
+   * Fetch Product data
    * @returns 
    */
   async function GetProducts(): Promise<AxiosResponse<any, any> | Error | void> {
@@ -56,7 +49,7 @@ export const useProductStore = defineStore('product', () => {
       // Deep copy to disconnect values.
       orderedProducts.value = JSON.parse(JSON.stringify(products.value));
 
-      SortKnownCategories();
+      FindAllPossibleCategories();
       return response
     }).catch((error: Error) => {
       console.log("Error fetching products", error);
@@ -78,19 +71,21 @@ export const useProductStore = defineStore('product', () => {
     }).then((response) => {
       return response
     }).catch((error: Error) => {
-      console.log("Error getting images", error);
+      console.warn("Error getting images", error);
       return error;
     }).finally(() => {
       fetchProductImagesLoader.value = false;
     })
   };
 
-  function SortKnownCategories() {
+  /**
+   * Find all possible product categories from the list of products received from the database.
+   */
+  function FindAllPossibleCategories() {
     if (!products || !products.value) {
       throw new Error("No products to sort");
     }
 
-    // const foundCategories: { category: ProductCategory, total: number }[] = [];
     let foundCategories: Record<ProductCategory, number> | {} | any = {};
 
     for (var i = 0; i < products.value?.length; i++) {
@@ -104,34 +99,22 @@ export const useProductStore = defineStore('product', () => {
       };
     };
 
+    // TODO: Add category of all. 
     productCategories.value = foundCategories;
   }
 
-  function FilterProductsBy({ category, search, filter }: { category?: string, search?: string, filter?: string }) {
-    if (!products?.value) {
-      console.error("No products found");
-      return
-    }
-    
-    // console.log("FilterProductsBy:products.value:", products.value)
-    orderedProducts.value = JSON.parse(JSON.stringify(products.value));
-
-    if (category) {
-      orderedProducts.value = orderedProducts.value?.filter((product) => product.productCategory.toLowerCase() === category.toLowerCase());
-    }
-  }
-
+  /**
+   * Get all the relevant url parameters and query values. Capture them in the store for global use.
+   * @param router Vue Router
+   */
   function GetAllRelevantParameters(router: Router) {
     const category = router.currentRoute.value.params?.category as string | undefined;
     const filter = router.currentRoute.value.params?.filter as string | undefined;
     const search = router.currentRoute.value.query?.q as string | undefined;
 
-    console.log("GetAllRelevantParameters, category", category);
-    console.log("GetAllRelevantParameters, filter", filter);
-    console.log("GetAllRelevantParameters, search", search);
-
-    selectedProductCategories.value = category;
-    selectedFilter.value = filter;
+    // TODO: simplify categories
+    selectedProductCategory.value = category;
+    sortingSelection.value = filter;
     searchInputValue.value = search!;
 
     FilterProductsBy({
@@ -139,7 +122,102 @@ export const useProductStore = defineStore('product', () => {
       filter: filter,
       search: search
     });
+  };
+
+  /**
+   * Filter products based on the values provided. These should ideally should reference what is in the browser's url.
+   * @param param.categories Category of product
+   * @param param.search Search input user has provided. What the user is searching for.
+   * @param param.search The order at which products are presented. Ascending, Descending, ordered by Name etc.
+   * @returns 
+   */
+  function FilterProductsBy({ category, search, filter }: { category?: string, search?: string, filter?: string }) {
+    if (!products?.value) {
+      console.error("No products found");
+      return
+    }
+
+    // Deep copy to separate values from one another
+    orderedProducts.value = JSON.parse(JSON.stringify(products.value));
+
+    if (category && (productCategories.value && productCategories?.value[category as ProductCategory])) {
+      orderedProducts.value = orderedProducts.value?.filter((product) => product.productCategory.toLowerCase() === category.toLowerCase());
+    } else if (category?.toLowerCase() === "all") {
+      orderedProducts.value = JSON.parse(JSON.stringify(products.value));
+    }
+
+    // make sure the products match the search;
+    if (search && orderedProducts.value) {
+      orderedProducts.value = JSON.parse(JSON.stringify(orderedProducts.value)).filter((product: Product) => {
+        if (product.price.toString().includes(search.toLowerCase())) return product;
+        if (product.productCategory.toLowerCase().includes(search.toLowerCase())) return product;
+        if (product.productName.toLowerCase().includes(search.toLowerCase())) return product;
+      });
+    }
+
+    // Check if there are any assigned order by values
+    SortBy()
   }
+
+  /**
+   * The order at which products are presented. Price Ascending, Price Descending, ordered by Name etc.
+   * @returns 
+   */
+  function SortBy() {
+    if (!orderedProducts?.value || orderedProducts.value.length === 1) return;
+
+
+    switch (sortingSelection.value) {
+      case "priceAsc":
+        orderedProducts.value = orderedProducts.value.sort((a, b) => {
+          // TODO: this can be simplified
+          if (a?.salePrice && b?.salePrice) {
+            return a.salePrice - b.salePrice
+          } else if (!a?.salePrice || !b?.salePrice) {
+            // Once or more sales prices are not available for comparison
+            if (!a?.salePrice && b?.salePrice) {
+              return a.price - b.salePrice;
+            } else if (a?.salePrice && !b?.salePrice) {
+              return a.salePrice - b.price;
+            }
+          };
+          return a.price - b.price;
+        });
+        break;
+      case "priceDesc":
+        orderedProducts.value = orderedProducts.value.sort((a, b) => {
+          if (b?.salePrice && a?.salePrice) {
+            return b.salePrice - a.salePrice
+          } else if (!b?.salePrice || !a?.salePrice) {
+            // Once or more sales prices are not available for comparison
+            if (!b?.salePrice && a?.salePrice) {
+              return b.price - a.salePrice;
+            } else if (b?.salePrice && !a?.salePrice) {
+              return b.salePrice - a.price;
+            }
+          };
+          return b.price - a.price;
+        });
+        break;
+      case "category":
+        orderedProducts.value = orderedProducts.value.sort((a, b) => {
+          if (a.productCategory < b.productCategory) return -1;
+          if (a.productCategory > b.productCategory) return 1;
+          return 0;
+        });
+
+        break;
+      case "name":
+        orderedProducts.value = orderedProducts.value.sort((a, b) => {
+          if (a.productName < b.productName) return -1;
+          if (a.productName > b.productName) return 1;
+          return 0;
+        });
+        break;
+      default:
+      // do nothing
+    }
+  };
 
   return {
     fetchProductsLoader,
@@ -147,17 +225,15 @@ export const useProductStore = defineStore('product', () => {
     products,
     orderedProducts,
     productCategories,
-    selectedProductCategories,
+    selectedProductCategory,
     searchInputValue,
     sortingOptions,
     sortingSelection,
-    selectedFilter,
-    filters,
 
     GetProducts,
     GetProductImages,
-    SortKnownCategories,
     FilterProductsBy,
     GetAllRelevantParameters,
+    SortBy,
   };
 })
